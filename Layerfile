@@ -1,7 +1,7 @@
 #This is an example webapp.io configuration for Docker!
 FROM vm/ubuntu:18.04
 
-# To note: Layerfiles create entire VMs, *not* containers!
+## To note: Layerfiles create entire VMs, *not* containers!
 SECRET ENV NEZHA_KEY
 SECRET ENV NEZHA_SERVER
 SECRET ENV UUID
