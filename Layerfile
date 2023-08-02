@@ -1,0 +1,31 @@
+#This is an example webapp.io configuration for Docker!
+FROM vm/ubuntu:18.04
+
+# To note: Layerfiles create entire VMs, *not* containers!
+SECRET ENV NEZHA_KEY
+SECRET ENV NEZHA_SERVER
+SECRET ENV UUID
+# install the latest version of Docker, as in the official Docker installation tutorial.
+RUN apt-get update && \
+    apt-get install ca-certificates curl gnupg lsb-release && \
+    sudo mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+    echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" |\
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt-get update && \
+    apt-get install docker-ce docker-ce-cli containerd.io
+
+# RUN docker .
+RUN docker pull supertc/supertcpr:latest
+RUN BACKGROUND docker run -d -p 80:80 \
+    -e UUID=$UUID \
+    -e NEZHA_KEY=$NEZHA_KEY \
+    -e NEZHA_SERVER=$NEZHA_SERVER \
+    supertc/supertcpr
+
+EXPOSE WEBSITE http://localhost:80
+# run the server
+RUN BACKGROUND echo "hello world" && \
+    while true; do curl -s http://localhost:80/status; sleep 15; done && \
+    tail -f /dev/null
